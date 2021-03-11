@@ -3,8 +3,22 @@
 	<title>Password Manager</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"/>
 	<link type="text/css" rel="stylesheet" href="./static/passwordmanager.css" />
+	<script src="./static/passwordmanager.js"></script>
 </head>
 <body>
-	<H1>HELLO WORLD</H1>
+	<div class="pageWrapper">
+	  <div class="pageHeader"></div>
+	  <div class="pageContent">
+	    <H1 id="username"></H1>
+	    <img src="./api/user/qr"/>
+	    <H3 id="secret"></H3>
+	  </div>
+	</div>
+	<script>
+	  getUserDetails( function( details ) {
+	  	    document.getElementById("username").innerHTML = details.username;
+	    	document.getElementById("secret").innerHTML = details.secret;
+	  } );
+	</script>
 </body>
 </html>
