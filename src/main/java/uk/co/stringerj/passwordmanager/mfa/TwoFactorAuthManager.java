@@ -29,8 +29,9 @@ public class TwoFactorAuthManager implements AuthenticationManager {
 
   private Authentication authenticate(TwoFactorAuthToken auth, User user) {
     Credentials creds = (Credentials) auth.getCredentials();
-    auth.setAuthenticated(passwordMatches(creds, user) && codeMatches(creds, user));
-    return auth;
+    TwoFactorAuthToken result = new TwoFactorAuthToken(user.getUsername(), user.getRole());
+    result.setAuthenticated(passwordMatches(creds, user) && codeMatches(creds, user));
+    return result;
   }
 
   private boolean passwordMatches(Credentials creds, User user) {

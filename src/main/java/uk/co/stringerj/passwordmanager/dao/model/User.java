@@ -12,13 +12,15 @@ public class User {
   @Id @Column private String username;
   @Column private String password;
   @Column private String secret;
+  @Column private String role;
 
   public User() {}
 
-  public User(String username, String password, String secret) {
+  public User(String username, String password, String secret, String role) {
     this.username = username;
     this.password = password;
     this.secret = secret;
+    this.role = role;
   }
 
   public String getUsername() {
@@ -43,5 +45,13 @@ public class User {
 
   public void setSecret(String secret) {
     this.secret = secret;
+  }
+
+  public String getRole() {
+    return role;
+  }
+
+  public void setRole(String role) {
+    this.role = role;
   }
 }

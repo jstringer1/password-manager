@@ -1,0 +1,42 @@
+<html>
+<head>
+	<title>Password Manager</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"/>
+	<link type="text/css" rel="stylesheet" href="./static/passwordmanager.css" />
+	<script src="./static/passwordmanager.js"></script>
+</head>
+<body>
+	<div class="pageWrapper">
+	  <div class="pageHeader"></div>
+	  <div class="pageContent">
+	    <BR>
+	    <div id="addUser">
+	      <table>
+	          <tr>
+	            <td><label for="username">USERNAME</label></td>
+	            <td><input type="text" id="username" name="username"></input></td>
+	          </tr>
+	          <tr>
+	            <td><label for="password">PASSWORD</label></td>
+	            <td><input type="password" id="password" name="password"></input></td>
+	          </tr>
+	          <tr>
+	            <td colspan="2" align="center"><input type="button" id="addNewUser" value="ADD USER"></input></td>
+	          </tr>
+	      </table>
+	    </div>
+	    <BR>
+	    <div id="users"></div>
+	  </div>
+	</div>
+	<script>
+	  drawUsersTable("users");
+	  document.getElementById("addNewUser").addEventListener('click', function() {
+	    var username = document.getElementById("username").value;
+	    var password = document.getElementById("password").value;
+	    var user = { "username":username, "password":password };
+	    addUser( user, function() { drawUsersTable("users"); } );
+	  }, false);
+	</script>
+</body>
+</html>
