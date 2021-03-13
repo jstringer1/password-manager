@@ -3,6 +3,7 @@ package uk.co.stringerj.passwordmanager.mfa;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import uk.co.stringerj.passwordmanager.dao.UserDao;
 import uk.co.stringerj.passwordmanager.dao.model.User;
@@ -12,9 +13,11 @@ import uk.co.stringerj.passwordmanager.mfa.TwoFactorAuthToken.Credentials;
 public class TwoFactorAuthManager implements AuthenticationManager {
 
   private final UserDao userDao;
+  private final PasswordEncoder passwordEncoder;
 
-  public TwoFactorAuthManager(UserDao userDao) {
+  public TwoFactorAuthManager(UserDao userDao, PasswordEncoder passwordEncoder) {
     this.userDao = userDao;
+    this.passwordEncoder = passwordEncoder;
   }
 
   @Override
@@ -35,7 +38,7 @@ public class TwoFactorAuthManager implements AuthenticationManager {
   }
 
   private boolean passwordMatches(Credentials creds, User user) {
-    return user.getPassword().equals(creds.getPassword());
+    return passwordEncoder.matches(creds.getPassword(), user.getPassword());
   }
 
   private boolean codeMatches(Credentials creds, User user) {

@@ -15,6 +15,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -50,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private Filter twoFactorAuthFilter() {
     TwoFactorAuthFilter filter = new TwoFactorAuthFilter();
-    filter.setAuthenticationManager(new TwoFactorAuthManager(userDao));
+    filter.setAuthenticationManager(new TwoFactorAuthManager(userDao, passwordEncoder()));
     filter.setAuthenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler());
     filter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler("/login"));
     filter.setAuthenticationSuccessHandler(this::onAuthenticationSuccess);
@@ -59,7 +61,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Bean
   public User defaultAdmin() {
-    return userDao.save(new User("setup", "password", "qwertyuiopasdfghjklzxcvbnm", "ADMIN"));
+    return userDao.save(
+        new User(
+            "setup", passwordEncoder().encode("password"), "qwertyuiopasdfghjklzxcvbnm", "ADMIN"));
+  }
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
   }
 
   private void onAuthenticationSuccess(
