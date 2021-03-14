@@ -1,6 +1,7 @@
 package uk.co.stringerj.passwordmanager;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.ServletException;
@@ -23,14 +24,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import uk.co.stringerj.passwordmanager.dao.UserDao;
 import uk.co.stringerj.passwordmanager.dao.model.User;
+import uk.co.stringerj.passwordmanager.mfa.AutoLoginDefaultAdminFilter;
 import uk.co.stringerj.passwordmanager.mfa.TwoFactorAuthFilter;
 import uk.co.stringerj.passwordmanager.mfa.TwoFactorAuthManager;
+import uk.co.stringerj.passwordmanager.service.SecretGenerator;
+import uk.co.stringerj.passwordmanager.service.SecretGenerator.Encoding;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+  private static final Logger LOGGER = Logger.getLogger(SecurityConfig.class.getSimpleName());
+
   @Autowired private UserDao userDao;
+  @Autowired private SecretGenerator secretGenerator;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -47,7 +54,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .formLogin()
         .loginPage("/login")
         .and()
-        .addFilterBefore(twoFactorAuthFilter(), UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(twoFactorAuthFilter(), UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(
+            new AutoLoginDefaultAdminFilter(userDao), UsernamePasswordAuthenticationFilter.class);
   }
 
   private Filter twoFactorAuthFilter() {
@@ -61,9 +70,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Bean
   public User defaultAdmin() {
-    return userDao.save(
-        new User(
-            "setup", passwordEncoder().encode("password"), "qwertyuiopasdfghjklzxcvbnm", "ADMIN"));
+    String password = secretGenerator.generateSecret(Encoding.PASSWORD, 20);
+    String secret = secretGenerator.generateSecret(Encoding.BASE32_SECRET, 20);
+    LOGGER.warning(
+        String.format(
+            "\n*****\tSETUP USER HAS INITIAL PASSWORD: %s AND SECRET: %s\n", password, secret));
+    return userDao.save(new User("setup", passwordEncoder().encode(password), secret, "ADMIN"));
   }
 
   @Bean

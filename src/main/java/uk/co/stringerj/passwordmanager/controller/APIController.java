@@ -6,7 +6,10 @@ import javax.imageio.ImageIO;
 import javax.servlet.ServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.co.stringerj.passwordmanager.model.UserDetails;
@@ -26,5 +29,11 @@ public class APIController {
   public void qr(ServletResponse response) throws IOException {
     response.setContentType("image/jpeg");
     ImageIO.write(userService.getQRCode(), "jpg", response.getOutputStream());
+  }
+
+  @PostMapping("/api/user/resetsecret")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void resetSecret() {
+    userService.resetSecret();
   }
 }

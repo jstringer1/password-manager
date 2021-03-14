@@ -10,7 +10,8 @@
 	  <div class="pageHeader"></div>
 	  <div class="pageContent">
 	    <H1 id="username"></H1>
-	    <img src="./api/user/qr"/>
+	    <div><img id="qr" src="./api/user/qr"/></div>
+	    <div><input type="button" id="resetsecret" value="RESET SECRET"></input></div>
 	    <H3 id="secret"></H3>
 	  </div>
 	</div>
@@ -19,6 +20,16 @@
 	  	    document.getElementById("username").innerHTML = details.username;
 	    	document.getElementById("secret").innerHTML = details.secret;
 	  } );
+	  document.getElementById("resetsecret").addEventListener('click', function() {
+	    resetSecret( function() {
+	      getUserDetails( function( details ) {
+	    	document.getElementById("secret").innerHTML = details.secret;
+	      } );
+	      var qr = document.getElementById("qr");
+	      var timestamp = new Date().getTime(); 
+	      qr.src = "./api/user/qr?timestamp="+timestamp;
+	    } );
+	  }, false);
 	</script>
 </body>
 </html>
