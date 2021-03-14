@@ -20,10 +20,10 @@ public class TwoFactorAuthToken extends AbstractAuthenticationToken {
     this.credentials = new Credentials(password, code);
   }
 
-  public TwoFactorAuthToken(String username, String role) {
+  public TwoFactorAuthToken(String username, String role, byte[] key) {
     super(Arrays.asList(new SimpleGrantedAuthority("ROLE_" + role)));
     this.username = username;
-    this.credentials = new Credentials("", "");
+    this.credentials = new Credentials(key);
   }
 
   @Override
@@ -39,10 +39,18 @@ public class TwoFactorAuthToken extends AbstractAuthenticationToken {
   public static class Credentials {
     private final String password;
     private final String code;
+    private final byte[] key;
 
     public Credentials(String password, String code) {
       this.password = password;
       this.code = code;
+      this.key = new byte[0];
+    }
+
+    public Credentials(byte[] key) {
+      this.password = "";
+      this.code = "";
+      this.key = key;
     }
 
     public String getPassword() {
@@ -51,6 +59,10 @@ public class TwoFactorAuthToken extends AbstractAuthenticationToken {
 
     public String getCode() {
       return code;
+    }
+
+    public byte[] getKey() {
+      return key;
     }
   }
 }

@@ -5,12 +5,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import de.mkammerer.argon2.Argon2Factory;
 import uk.co.stringerj.passwordmanager.dao.UserDao;
 import uk.co.stringerj.passwordmanager.dao.model.User;
 import uk.co.stringerj.passwordmanager.mfa.TwoFactorAuthToken.Credentials;
 
 /** Validates {@link TwoFactorAuthToken}'s against details stored in the DB. */
 public class TwoFactorAuthManager implements AuthenticationManager {
+
+  private static final byte[] KEY_SALT = "Q8jZF64p".getBytes();
 
   private final UserDao userDao;
   private final PasswordEncoder passwordEncoder;
@@ -32,7 +35,9 @@ public class TwoFactorAuthManager implements AuthenticationManager {
 
   private Authentication authenticate(TwoFactorAuthToken auth, User user) {
     Credentials creds = (Credentials) auth.getCredentials();
-    TwoFactorAuthToken result = new TwoFactorAuthToken(user.getUsername(), user.getRole());
+    TwoFactorAuthToken result =
+        new TwoFactorAuthToken(
+            user.getUsername(), user.getRole(), calculateKey(creds.getPassword()));
     result.setAuthenticated(passwordMatches(creds, user) && codeMatches(creds, user));
     return result;
   }
@@ -43,5 +48,10 @@ public class TwoFactorAuthManager implements AuthenticationManager {
 
   private boolean codeMatches(Credentials creds, User user) {
     return TOTP.calculate(user.getSecret()).matches(creds.getCode());
+  }
+
+  private byte[] calculateKey(String password) {
+    return Argon2Factory.createAdvanced(8, 16)
+        .rawHash(10, 64 * 1024, 4, password.toCharArray(), KEY_SALT);
   }
 }

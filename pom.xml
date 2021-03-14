@@ -56,6 +56,11 @@
 			<version>3.4.1</version>
 		</dependency>
 		<dependency>
+			<groupId>com.jpmorgan.quorum</groupId>
+			<artifactId>argon2</artifactId>
+			<version>0.11.0.30092019161842</version>
+		</dependency>
+		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
 			<scope>test</scope>

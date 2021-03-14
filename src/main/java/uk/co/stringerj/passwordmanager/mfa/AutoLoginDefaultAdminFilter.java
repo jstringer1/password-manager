@@ -43,7 +43,7 @@ public class AutoLoginDefaultAdminFilter extends GenericFilterBean {
     }
     User defaultAdmin = it.next();
     TwoFactorAuthToken auth =
-        new TwoFactorAuthToken(defaultAdmin.getUsername(), defaultAdmin.getRole());
+        new TwoFactorAuthToken(defaultAdmin.getUsername(), defaultAdmin.getRole(), new byte[0]);
     auth.setAuthenticated(true);
     SecurityContextHolder.getContext().setAuthentication(auth);
     if (response instanceof HttpServletResponse) {
