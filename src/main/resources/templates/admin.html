@@ -3,7 +3,7 @@
 	<title>Password Manager</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"/>
 	<link type="text/css" rel="stylesheet" href="./static/passwordmanager.css" />
-	<script src="./static/passwordmanager.js"></script>
+	<script src="./static/api.js"></script>
 </head>
 <body>
 	<div class="pageWrapper">
@@ -29,14 +29,6 @@
 	    <div id="users"></div>
 	  </div>
 	</div>
-	<script>
-	  drawUsersTable("users");
-	  document.getElementById("addNewUser").addEventListener('click', function() {
-	    var username = document.getElementById("username").value;
-	    var password = document.getElementById("password").value;
-	    var user = { "username":username, "password":password };
-	    addUser( user, function() { drawUsersTable("users"); } );
-	  }, false);
-	</script>
+	<script src="./static/admin.js"></script>
 </body>
 </html>
