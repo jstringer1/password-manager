@@ -7,12 +7,20 @@
 </head>
 <body>
 	<div class="pageWrapper">
-	  <div class="pageHeader"></div>
+	  <div class="pageHeader">
+	    <h3 id="username"></h3>
+	    <div class="nav">
+	      <ul>
+	        <li><button id="resetsecret">RESET SECRET</button></li>
+	        <li><button id="logout">LOGOUT</button></li>
+	      </ul>
+	    </div>
+	  </div>
 	  <div class="pageContent">
-	    <H1 id="username"></H1>
-	    <div><img id="qr" src="./api/user/qr"/></div>
-	    <div><input type="button" id="resetsecret" value="RESET SECRET"></input></div>
-	    <H3 id="secret"></H3>
+	  </div>
+	  <div class="pageFooter">
+	    <img id="qr" src="./api/user/qr"/>
+	    <h3 id="secret"></h3>
 	  </div>
 	</div>
 	<script>
@@ -29,6 +37,9 @@
 	      var timestamp = new Date().getTime(); 
 	      qr.src = "./api/user/qr?timestamp="+timestamp;
 	    } );
+	  }, false);
+	  document.getElementById("logout").addEventListener('click', function() {
+	    window.location.href="./logout";
 	  }, false);
 	</script>
 </body>
