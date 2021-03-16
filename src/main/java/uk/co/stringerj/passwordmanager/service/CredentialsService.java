@@ -37,7 +37,7 @@ public class CredentialsService {
         .map(record -> decrypt(record, key))
         .filter(creds -> creds.matches(credentials))
         .findAny()
-        .orElse(new CredentialsWithRecord(username))
+        .orElse(new CredentialsWithRecord(credentials, username))
         .updateRecordAndSave(credentials, key);
   }
 
@@ -111,8 +111,8 @@ public class CredentialsService {
     private final Credentials credentials;
     private final EncryptedCredentials record;
 
-    public CredentialsWithRecord(String username) {
-      this(null, new EncryptedCredentials(username, "", ""));
+    public CredentialsWithRecord(Credentials credentials, String username) {
+      this(credentials, new EncryptedCredentials(username, "", ""));
     }
 
     public CredentialsWithRecord(Credentials credentials, EncryptedCredentials record) {

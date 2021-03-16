@@ -44,12 +44,45 @@ var api = (function() {
     table.appendChild( headerRow );
   }
   
+  function drawPasswordCell( cell, password ) {
+      var passwd = document.createElement( "span" );
+      passwd.innerHTML = password;
+      passwd.style.display = "none";
+      var show = document.createElement( "button" );
+      var copy = document.createElement( "button" );
+      show.innerHTML = "SHOW";
+      copy.innerHTML = "COPY";
+      cell.appendChild( passwd );
+      cell.appendChild( show );
+      cell.appendChild( copy );
+      show.addEventListener('click', function() {
+        if( show.innerHTML == "SHOW" ) {
+          show.innerHTML = "HIDE";
+          passwd.style.display = "inline";
+        } else {
+          show.innerHTML = "SHOW";
+          passwd.style.display = "none";
+        }
+      }, false);
+      copy.addEventListener('click', function() {
+        var clipboard = document.createElement("input");
+        clipboard.value = password;
+        document.body.appendChild(clipboard);
+        clipboard.select();
+        clipboard.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+        document.body.removeChild(clipboard);
+      }, false);
+  }
+  
   function drawTableCell( row, model, data ) {
     var cell = document.createElement( "td" );
     if( model == "qr" ) {
       var qrImg = document.createElement( "img" );
       qrImg.src = "./admin/api/qr/"+data.secret;
       cell.appendChild( qrImg );
+    } else if( model == "password" ) {
+      drawPasswordCell( cell, data[model]);
     } else {
       cell.innerHTML = data[model];
     }
@@ -78,6 +111,8 @@ var api = (function() {
     return {
       getUserDetails: function( callback ) { getForJSON( "./api/user", callback ); },
       resetSecret: function( callback ) { postEmpty( "./api/user/resetsecret", callback ); },
+      getCredentials: function( callback ) { getForJSON( "./api/user/credentials", callback ); },
+      saveCredentials: function( credentials, callback ) { postJSON( "./api/user/credentials", credentials, callback ); }
     }
   })();
 
