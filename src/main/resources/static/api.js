@@ -34,6 +34,46 @@ var api = (function() {
     req.send();
   }
   
+  function drawTableHeader( table, model ) {
+    var headerRow = document.createElement( "tr" );
+    for( var i=0; i<model.length; i++ ) {
+      var cell = document.createElement( "th" );
+      cell.innerHTML = model[i];
+      headerRow.appendChild( cell );
+    }
+    table.appendChild( headerRow );
+  }
+  
+  function drawTableCell( row, model, data ) {
+    var cell = document.createElement( "td" );
+    if( model == "qr" ) {
+      var qrImg = document.createElement( "img" );
+      qrImg.src = "./admin/api/qr/"+data.secret;
+      cell.appendChild( qrImg );
+    } else {
+      cell.innerHTML = data[model];
+    }
+    row.appendChild( cell );
+  }
+  
+  function drawTableRow( table, model, data ) {
+    var row = document.createElement( "tr" );
+    for( var i=0; i<model.length; i++ ) {
+      drawTableCell( row, model[i], data );
+    }
+    table.appendChild( row );
+  }
+  
+  function drawTable( id, model, data ) {
+    var table = document.createElement( "table" );
+    drawTableHeader( table, model );
+    for( var i=0; i<data.length; i++ ) {
+      drawTableRow( table, model, data[i] );
+    }
+    document.getElementById( id ).innerHTML = "";
+    document.getElementById( id ).appendChild( table );
+  }
+  
   var userApi = (function() {
     return {
       getUserDetails: function( callback ) { getForJSON( "./api/user", callback ); },
@@ -48,5 +88,5 @@ var api = (function() {
     }
   })();
 
-  return { user: userApi, admin: adminApi }
+  return { user: userApi, admin: adminApi, ui: { drawTable: drawTable } }
 })();
